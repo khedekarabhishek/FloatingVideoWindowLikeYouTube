@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AD006F18200DFDCE005EA821 /* DraggableFloatingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD006F17200DFDCE005EA821 /* DraggableFloatingViewController.swift */; };
 		E18C9D7620052E8700FE35AF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18C9D7520052E8700FE35AF /* AppDelegate.swift */; };
 		E18C9D7820052E8700FE35AF /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18C9D7720052E8700FE35AF /* ViewController.swift */; };
 		E18C9D7B20052E8700FE35AF /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E18C9D7920052E8700FE35AF /* Main.storyboard */; };
@@ -34,6 +35,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		AD006F17200DFDCE005EA821 /* DraggableFloatingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DraggableFloatingViewController.swift; sourceTree = "<group>"; };
 		E18C9D7220052E8700FE35AF /* FloatingVideoWindowLikeYouTube.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FloatingVideoWindowLikeYouTube.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E18C9D7520052E8700FE35AF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E18C9D7720052E8700FE35AF /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -99,6 +101,7 @@
 			children = (
 				E18C9D7520052E8700FE35AF /* AppDelegate.swift */,
 				E18C9D7720052E8700FE35AF /* ViewController.swift */,
+				AD006F17200DFDCE005EA821 /* DraggableFloatingViewController.swift */,
 				E18C9D7920052E8700FE35AF /* Main.storyboard */,
 				E18C9D7C20052E8700FE35AF /* Assets.xcassets */,
 				E18C9D7E20052E8700FE35AF /* LaunchScreen.storyboard */,
@@ -261,6 +264,7 @@
 			files = (
 				E18C9D7820052E8700FE35AF /* ViewController.swift in Sources */,
 				E18C9D7620052E8700FE35AF /* AppDelegate.swift in Sources */,
+				AD006F18200DFDCE005EA821 /* DraggableFloatingViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
