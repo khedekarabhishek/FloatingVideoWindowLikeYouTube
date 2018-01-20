@@ -167,6 +167,8 @@ class DraggableFloatingViewController: UIViewController {
         }
         if let appWindow = wind {
             return appWindow
+        } else {
+            return UIWindow()
         }
     }
     
@@ -278,35 +280,48 @@ class DraggableFloatingViewController: UIViewController {
         UIView.animate(withDuration: 0.2, delay: 0.0, options: .curveEaseInOut, animations: {() -> Void in
             self.view.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
             self.view.alpha = 1
-            self.view.frame = CGRect(x: windowFrame.origin.x, y: windowFrame.origin.y, width: windowFrame.size.width, height: windowFrame.size.height)
+            self.view.frame = CGRect(x: self.windowFrame.origin.x, y: self.windowFrame.origin.y, width: self.windowFrame.size.width, height: self.windowFrame.size.height)
         }, completion: {(_ finished: Bool) -> Void in
             self.afterAppearAnimation()
         })
     }
     
     func afterAppearAnimation() {
-        videoWrapper.backgroundColor = UIColor.clear
-        videoView.backgroundColor = videoWrapper.backgroundColor
-        getWindow().addSubview(transparentBlackSheet)
-        getWindow().addSubview(pageWrapper)
-        getWindow().addSubview(videoWrapper)
-        view.hidden = true
-        videoView.addSubview(borderView)
-        videoWrapper.addSubview(controllerView)
-        messageView.hidden = true
-        videoWrapper.addSubview(messageView)
+        videoWrapper?.backgroundColor = UIColor.clear
+        videoView?.backgroundColor = videoWrapper?.backgroundColor
+        
+        if let tBlankSheet = transparentBlackSheet {
+            getWindow().addSubview(tBlankSheet)
+        }
+        if let pWrapper = pageWrapper {
+            getWindow().addSubview(pWrapper)
+        }
+        if let vWrapper = videoWrapper {
+            getWindow().addSubview(vWrapper)
+        }
+        view.isHidden = true
+        if let bView = borderView {
+            videoView?.addSubview(bView)
+        }
+        if let cView = controllerView {
+            videoWrapper?.addSubview(cView)
+        }
+        messageView?.isHidden = true
+        
+        if let mview = messageView {
+            videoWrapper?.addSubview(mview)
+        }
         showControllerView()
         let expandedTap = UITapGestureRecognizer(target: self, action: #selector(self.onTapExpandedVideoView))
         expandedTap.numberOfTapsRequired = 1
         expandedTap.delegate = self
-        videoWrapper.addGestureRecognizer(expandedTap)
+        videoWrapper?.addGestureRecognizer(expandedTap)
         vFrame = videoWrapperFrame
         wFrame = pageWrapperFrame
         // adding Pan Gesture
         let pan = UIPanGestureRecognizer(target: self, action: #selector(self.panAction))
-        var pan = UIPanGestureRecognizer(target: self, action: #selector(self.panAction))
         pan.delegate = self
-        videoWrapper.addGestureRecognizer(pan)
+        videoWrapper?.addGestureRecognizer(pan)
         isExpandedMode = true
     }
     
@@ -322,57 +337,64 @@ class DraggableFloatingViewController: UIViewController {
         //    [parentView addSubview:videoWrapper];
         if isSetuped {
             getWindow().bringSubview(toFront: view)
-            getWindow().bringSubview(toFront: transparentBlackSheet)
-            getWindow().bringSubview(toFront: pageWrapper)
-            getWindow().bringSubview(toFront: videoWrapper)
+            if let transparentBlackSheet = transparentBlackSheet {
+                getWindow().bringSubview(toFront: transparentBlackSheet)
+            }
+            if let pageWrapper = pageWrapper {
+                getWindow().bringSubview(toFront: pageWrapper)
+            }
+            if let videoWrapper = videoWrapper {
+                getWindow().bringSubview(toFront: videoWrapper)
+            }
         }
-    }
-    
-    func getWindow() -> UIWindow {
-        return UIApplication.shared.delegate?.window ?? UIWindow()
     }
     
     func removeAllViews() {
         UIApplication.shared.setStatusBarHidden(false, with: .slide)
-        videoWrapper.removeFromSuperview()
-        pageWrapper.removeFromSuperview()
-        transparentBlackSheet.removeFromSuperview()
+        videoWrapper?.removeFromSuperview()
+        pageWrapper?.removeFromSuperview()
+        transparentBlackSheet?.removeFromSuperview()
         view.removeFromSuperview()
     }
     
     func showMessageView() {
-        messageView.hidden = false
+        messageView?.isHidden = false
     }
     
     func hideMessageView() {
-        messageView.hidden = true
+        messageView?.isHidden = true
     }
     
     func setHideControllerTimer() {
-        if hideControllerTimer.isValid() {
-            hideControllerTimer.invalidate()
+        if let isval = hideControllerTimer?.isValid {
+            if isval {
+                hideControllerTimer?.invalidate()
+            }
         }
         hideControllerTimer = Timer.scheduledTimer(timeInterval: 3.0, target: self, selector: #selector(self.hideControllerView), userInfo: nil, repeats: false)
     }
     
-    func showControllerView() {
+    @objc func showControllerView() {
         print("showControllerView")
         isDisplayController = true
         setHideControllerTimer()
         UIView.animate(withDuration: 0.5, delay: 0.0, options: .curveEaseInOut, animations: {() -> Void in
-            self.controllerView.alpha = 1.0
+            self.controllerView?.alpha = 1.0
         }, completion: {(_ finished: Bool) -> Void in
         })
     }
     
-    func hideControllerView() {
+    @objc func hideControllerView() {
         print("hideControllerView")
         isDisplayController = false
-        if hideControllerTimer.isValid() {
-            hideControllerTimer.invalidate()
+        if let isval = hideControllerTimer?.isValid {
+            if isval {
+                hideControllerTimer?.invalidate()
+            }
         }
+        
         UIView.animate(withDuration: 0.5, delay: 0.0, options: .curveEaseInOut, animations: {() -> Void in
-            self.controllerView.alpha = 0.0
+            self.controllerView?.alpha = 0.0
         }, completion: {(_ finished: Bool) -> Void in
         })
     }
@@ -383,16 +405,16 @@ class DraggableFloatingViewController: UIViewController {
 
     @objc func onTapExpandedVideoView() {
         print("onTapExpandedVideoView")
-        if controllerView.alpha == 0.0 {
+        if controllerView?.alpha == 0.0 {
             showControllerView()
         }
-        else if controllerView.alpha == 1.0 {
+        else if controllerView?.alpha == 1.0 {
             hideControllerView()
         }
         
     }
     
-    func expandView(onTap sender: UITapGestureRecognizer) {
+    @objc func expandView(onTap sender: UITapGestureRecognizer) {
         expandView()
         showControllerAfterExpanded()
     }
@@ -400,44 +422,48 @@ class DraggableFloatingViewController: UIViewController {
 
 extension DraggableFloatingViewController: UIGestureRecognizerDelegate {
     
-    func panAction(_ recognizer: UIPanGestureRecognizer) {
+    @objc func panAction(_ recognizer: UIPanGestureRecognizer) {
         
         var touchPosInViewY: CGFloat = recognizer.location(in: view).y
         
         if recognizer.state == .began {
-            direction = UIPanGestureRecognizerDirectionUndefined
+            direction = .UIPanGestureRecognizerDirectionUndefined
             //storing direction
             var velocity: CGPoint = recognizer.velocity(in: recognizer.view)
             detectPanDirection(velocity)
             isMinimizingByGesture = false
             //Snag the Y position of the touch when panning begins
-            touchPositionInHeaderY = recognizer.location(in: videoWrapper).y
-            touchPositionInHeaderX = recognizer.location(in: videoWrapper).x
-            if direction == UIPanGestureRecognizerDirectionDown {
-                if videoView.frame.size.height > minimamVideoHeight {
-                    // player.controlStyle = MPMovieControlStyleNone;
-                    print("minimize gesture start")
-                    isMinimizingByGesture = true
-                    didStartMinimizeGesture()
+            _touchPositionInHeaderY = recognizer.location(in: videoWrapper).y
+            _touchPositionInHeaderX = recognizer.location(in: videoWrapper).x
+            if direction == .UIPanGestureRecognizerDirectionDown {
+                if let vFrame = videoView?.frame {
+                    if vFrame.size.height > minimamVideoHeight {
+                        // player.controlStyle = MPMovieControlStyleNone;
+                        print("minimize gesture start")
+                        isMinimizingByGesture = true
+                        didStartMinimizeGesture()
+                    }
                 }
             }
         } else if recognizer.state == .changed {
-            if direction == UIPanGestureRecognizerDirectionDown || direction == UIPanGestureRecognizerDirectionUp {
+            if direction == .UIPanGestureRecognizerDirectionDown || direction == .UIPanGestureRecognizerDirectionUp {
                 //            CGFloat appendY = 20;
                 //            if (direction == UIPanGestureRecognizerDirectionUp) appendY = -appendY;
-                var newOffsetY: CGFloat = touchPosInViewY - touchPositionInHeaderY
+                var newOffsetY: CGFloat = touchPosInViewY - _touchPositionInHeaderY
                 // + appendY;
                 // CGFloat newOffsetX = newOffsetY * 0.35;
-                adjustView(onVerticalPan: newOffsetY, recognizer: recognizer)
+                adjustView(onVerticalPan: &newOffsetY, recognizer: recognizer)
             }
-            else if direction == UIPanGestureRecognizerDirectionRight || direction == UIPanGestureRecognizerDirectionLeft {
+            else if direction == .UIPanGestureRecognizerDirectionRight || direction == .UIPanGestureRecognizerDirectionLeft {
                 adjustView(onHorizontalPan: recognizer)
             }
         } else if recognizer.state == .ended {
             
             var velocity: CGPoint = recognizer.velocity(in: recognizer.view)
-            
-            if direction == UIPanGestureRecognizerDirectionDown || direction == UIPanGestureRecognizerDirectionUp {
+            guard let rView = recognizer.view else {
+                return
+            }
+            if direction == .UIPanGestureRecognizerDirectionDown || direction == .UIPanGestureRecognizerDirectionUp {
                 if velocity.y < -flickVelocity {
                     //                NSLog(@"flick up");
                     expandView()
@@ -453,12 +479,12 @@ extension DraggableFloatingViewController: UIGestureRecognizerDelegate {
                     recognizer.setTranslation(CGPoint.zero, in: recognizer.view)
                     return
                 }
-                else if recognizer.view.frame.origin.y > (windowFrame.size.width / 2) {
+                else if rView.frame.origin.y > (windowFrame.size.width / 2) {
                     minimizeView()
                     recognizer.setTranslation(CGPoint.zero, in: recognizer.view)
                     return
                 }
-                else if recognizer.view.frame.origin.y < (windowFrame.size.width / 2) || recognizer.view.frame.origin.y < 0 {
+                else if rView.frame.origin.y < (windowFrame.size.width / 2) || rView.frame.origin.y < 0 {
                     expandView()
                     if isMinimizingByGesture == false {
                         showControllerAfterExpanded()
@@ -467,40 +493,44 @@ extension DraggableFloatingViewController: UIGestureRecognizerDelegate {
                     return
                 }
             }
-            else if direction == UIPanGestureRecognizerDirectionLeft {
-                if pageWrapper.alpha <= 0 {
-                    if velocity.x < -flickVelocity || pageWrapper.alpha < 0.3 {
-                        fadeOutView(toLeft: recognizer, completion: {() -> Void in
-                            self.disappear()
-                        })
-                        return
-                    }
-                    else if recognizer.view.frame.origin.x < 0 {
-                        disappear()
-                    }
-                    else {
-                        animateMiniView(toNormalPosition: recognizer) {() -> Void in }
+            else if direction == .UIPanGestureRecognizerDirectionLeft {
+                if let pWrappAlpha = pageWrapper?.alpha {
+                    if pWrappAlpha <= 0 {
+                        if velocity.x < -flickVelocity || pWrappAlpha < 0.3 {
+                            fadeOutView(toLeft: recognizer, completion: {() -> Void in
+                                self.disappear()
+                            })
+                            return
+                        }
+                        else if rView.frame.origin.x < 0 {
+                            disappear()
+                        }
+                        else {
+                            animateMiniView(toNormalPosition: recognizer) {() -> Void in }
+                        }
                     }
                 }
-            } else if direction == UIPanGestureRecognizerDirectionRight {
-                if pageWrapper.alpha <= 0 {
-                    if velocity.x > flickVelocity {
-                        fadeOutView(toRight: recognizer, completion: {() -> Void in
-                            self.disappear()
-                        })
-                        return
-                    }
-                    if recognizer.view.frame.origin.x > windowFrame.size.width - 50 {
-                        disappear()
-                    }
-                    else {
-                        animateMiniView(toNormalPosition: recognizer) {() -> Void in }
+                
+            } else if direction == .UIPanGestureRecognizerDirectionRight {
+                
+                if let pWrappAlpha = pageWrapper?.alpha {
+                    if pWrappAlpha <= 0 {
+                        if velocity.x > flickVelocity {
+                            fadeOutView(toRight: recognizer, completion: {() -> Void in
+                                self.disappear()
+                            })
+                            return
+                        }
+                        if rView.frame.origin.x > windowFrame.size.width - 50 {
+                            disappear()
+                        }
+                        else {
+                            animateMiniView(toNormalPosition: recognizer) {() -> Void in }
+                        }
                     }
                 }
             }
-            
             isMinimizingByGesture = false
-            
         }
     }
     
@@ -509,24 +539,23 @@ extension DraggableFloatingViewController: UIGestureRecognizerDelegate {
         let isVerticalGesture: Bool = fabs(velocity.y) > fabs(velocity.x)
         if isVerticalGesture {
             if velocity.y > 0 {
-                direction = UIPanGestureRecognizerDirectionDown
+                direction = .UIPanGestureRecognizerDirectionDown
             }
             else {
-                direction = UIPanGestureRecognizerDirectionUp
+                direction = .UIPanGestureRecognizerDirectionUp
             }
         }
         else {
             if velocity.x > 0 {
-                direction = UIPanGestureRecognizerDirectionRight
+                direction = .UIPanGestureRecognizerDirectionRight
             }
             else {
-                direction = UIPanGestureRecognizerDirectionLeft
+                direction = .UIPanGestureRecognizerDirectionLeft
             }
         }
     }
     
-    
-    func adjustView(onVerticalPan newOffsetY: CGFloat, recognizer: UIPanGestureRecognizer) {
+    func adjustView(onVerticalPan newOffsetY: inout CGFloat, recognizer: UIPanGestureRecognizer) {
         var touchPosInViewY: CGFloat = recognizer.location(in: view).y
         var progressRate: CGFloat = newOffsetY / finalViewOffsetY
         if progressRate >= 0.99 {
@@ -534,87 +563,102 @@ extension DraggableFloatingViewController: UIGestureRecognizerDelegate {
             newOffsetY = finalViewOffsetY
         }
         calcNewFrame(withParsentage: progressRate, newOffsetY: newOffsetY)
-        
-        if progressRate <= 1 && pageWrapper.frame.origin.y >= 0 {
-            pageWrapper.frame = wFrame
-            videoWrapper.frame = vFrame
-            videoView.frame = CGRect(x: videoView.frame.origin.x, y: videoView.frame.origin.x, width: vFrame.size.width, height: vFrame.size.height)
-            bodyView.frame = CGRect(x: 0, y: videoView.frame.size.height, width: // keep stay on bottom of videoView
-                bodyView.frame.size.width, height: bodyView.frame.size.height)
-            borderView.frame = CGRect(x: videoView.frame.origin.y - 1, y: videoView.frame.origin.x - 1, width: videoView.frame.size.width + 1, height: videoView.frame.size.height + 1)
-            controllerView.frame = videoView.frame
+        guard let pFrame = pageWrapper?.frame else { return  }
+        guard let videoFrame = videoView?.frame else { return  }
+        guard let bodyVFrame = bodyView?.frame else { return  }
+
+        if progressRate <= 1 && pFrame.origin.y >= 0 {
+            pageWrapper?.frame = wFrame
+            videoWrapper?.frame = vFrame
+            
+            videoView?.frame = CGRect(x: videoFrame.origin.x, y: videoFrame.origin.x, width: vFrame.size.width, height: vFrame.size.height)
+            bodyView?.frame = CGRect(x: 0, y: videoFrame.size.height, width: // keep stay on bottom of videoView
+                bodyVFrame.size.width, height: bodyVFrame.size.height)
+            borderView?.frame = CGRect(x: videoFrame.origin.y - 1, y: videoFrame.origin.x - 1, width: videoFrame.size.width + 1, height: videoFrame.size.height + 1)
+            controllerView?.frame = videoFrame
             
             var percentage: CGFloat = touchPosInViewY / windowFrame.size.height
-            transparentBlackSheet.alpha = 1.0 - (percentage * 1.5)
-            pageWrapper.alpha = transparentBlackSheet.alpha
+            transparentBlackSheet?.alpha = 1.0 - (percentage * 1.5)
+            if let transparentBlackSheetAlpha = transparentBlackSheet?.alpha {
+                pageWrapper?.alpha = transparentBlackSheetAlpha
+            }
             if percentage > 0.2 {
-                borderView.alpha = percentage
+                borderView?.alpha = percentage
             }
             else {
-                borderView.alpha = 0
+                borderView?.alpha = 0
             }
             if isDisplayController {
-                controllerView.alpha = 1.0 - (percentage * 2)
+                controllerView?.alpha = 1.0 - (percentage * 2)
                 //            if (percentage > 0.2) borderView.alpha = percentage;
                 //            else borderView.alpha = 0;
             }
-            if direction == UIPanGestureRecognizerDirectionDown {
+            if direction == .UIPanGestureRecognizerDirectionDown {
                 //            [parentView bringSubviewToFront:self.view];
                 bringToFront()
             }
-            if direction == UIPanGestureRecognizerDirectionUp && videoView.frame.origin.y <= 10 {
+            if direction == .UIPanGestureRecognizerDirectionUp && videoFrame.origin.y <= 10 {
                 didFullExpandByGesture()
             }
         }
         else if wFrame.origin.y < finalViewOffsetY && wFrame.origin.y > 0 {
-            pageWrapper.frame = wFrame
-            videoWrapper.frame = vFrame
-            videoView.frame = CGRect(x: videoView.frame.origin.x, y: videoView.frame.origin.x, width: vFrame.size.width, height: vFrame.size.height)
-            bodyView.frame = CGRect(x: 0, y: videoView.frame.size.height, width: // keep stay on bottom of videoView
-                bodyView.frame.size.width, height: bodyView.frame.size.height)
-            borderView.frame = CGRect(x: videoView.frame.origin.y - 1, y: videoView.frame.origin.x - 1, width: videoView.frame.size.width + 1, height: videoView.frame.size.height + 1)
-            borderView.alpha = progressRate
+            pageWrapper?.frame = wFrame
+            videoWrapper?.frame = vFrame
+            videoView?.frame = CGRect(x: videoFrame.origin.x, y: videoFrame.origin.x, width: vFrame.size.width, height: vFrame.size.height)
+            bodyView?.frame = CGRect(x: 0, y: videoFrame.size.height, width: // keep stay on bottom of videoView
+                bodyVFrame.size.width, height: bodyVFrame.size.height)
+            borderView?.frame = CGRect(x: videoFrame.origin.y - 1, y: videoFrame.origin.x - 1, width: videoFrame.size.width + 1, height: videoFrame.size.height + 1)
+            borderView?.alpha = progressRate
         }
         
         recognizer.setTranslation(CGPoint.zero, in: recognizer.view)
     }
     
+    func didFullExpandByGesture () {
+        
+    }
     
     func adjustView(onHorizontalPan recognizer: UIPanGestureRecognizer) {
-        if pageWrapper.alpha <= 0 {
-            var x: CGFloat = recognizer.location(in: view).x
-            
-            if direction == UIPanGestureRecognizerDirectionLeft {
-                //            NSLog(@"recognizer x=%f",recognizer.view.frame.origin.x);
-                var velocity: CGPoint = recognizer.velocity(in: recognizer.view)
-                var isVerticalGesture: Bool = fabs(velocity.y) > fabs(velocity.x)
-                var translation: CGPoint = recognizer.translation(in: recognizer.view)
-                recognizer.view.center = CGPoint(x: recognizer.view.center.x + translation.x, y: recognizer.view.center.y)
-                if !isVerticalGesture {
-                    var percentage: CGFloat = (x / windowFrame.size.width)
-                    recognizer.view.alpha = percentage
-                }
-                recognizer.setTranslation(CGPoint.zero, in: recognizer.view)
-            }
-            else if direction == UIPanGestureRecognizerDirectionRight {
-                //            NSLog(@"recognizer x=%f",recognizer.view.frame.origin.x);
-                var velocity: CGPoint = recognizer.velocity(in: recognizer.view)
-                var isVerticalGesture: Bool = fabs(velocity.y) > fabs(velocity.x)
-                var translation: CGPoint = recognizer.translation(in: recognizer.view)
-                recognizer.view.center = CGPoint(x: recognizer.view.center.x + translation.x, y: recognizer.view.center.y)
-                if !isVerticalGesture {
-                    if velocity.x > 0 {
-                        var percentage: CGFloat = (x / windowFrame.size.width)
-                        recognizer.view.alpha = 1.0 - percentage
+        if let pageWrapperAlpha = pageWrapper?.alpha {
+            if pageWrapperAlpha <= 0 {
+                var x: CGFloat = recognizer.location(in: view).x
+
+                if let recognizerView = recognizer.view {
+                    if direction == .UIPanGestureRecognizerDirectionLeft {
+                        //            NSLog(@"recognizer x=%f",recognizer.view.frame.origin.x);
+                        var velocity: CGPoint = recognizer.velocity(in: recognizer.view)
+                        var isVerticalGesture: Bool = fabs(velocity.y) > fabs(velocity.x)
+                        var translation: CGPoint = recognizer.translation(in: recognizer.view)
+                        recognizerView.center = CGPoint(x: recognizerView.center.x + translation.x, y: recognizerView.center.y)
+                        if !isVerticalGesture {
+                            var percentage: CGFloat = (x / windowFrame.size.width)
+                            recognizerView.alpha = percentage
+                        }
+                        recognizer.setTranslation(CGPoint.zero, in: recognizer.view)
                     }
-                    else {
-                        var percentage: CGFloat = (x / windowFrame.size.width)
-                        recognizer.view.alpha = percentage
+                    else if direction == .UIPanGestureRecognizerDirectionRight {
+                        //            NSLog(@"recognizer x=%f",recognizer.view.frame.origin.x);
+                        var velocity: CGPoint = recognizer.velocity(in: recognizer.view)
+                        var isVerticalGesture: Bool = fabs(velocity.y) > fabs(velocity.x)
+                        var translation: CGPoint = recognizer.translation(in: recognizer.view)
+                        recognizerView.center = CGPoint(x: recognizerView.center.x + translation.x, y: recognizerView.center.y)
+                        if !isVerticalGesture {
+                            if velocity.x > 0 {
+                                var percentage: CGFloat = (x / windowFrame.size.width)
+                                recognizerView.alpha = 1.0 - percentage
+                            }
+                            else {
+                                var percentage: CGFloat = (x / windowFrame.size.width)
+                                recognizerView.alpha = percentage
+                            }
+                        }
+                        recognizer.setTranslation(CGPoint.zero, in: recognizer.view)
                     }
                 }
-                recognizer.setTranslation(CGPoint.zero, in: recognizer.view)
+                
             }
         }
+        
     }
     
     func calcNewFrame(withParsentage persentage: CGFloat, newOffsetY: CGFloat) {
@@ -651,33 +695,39 @@ extension DraggableFloatingViewController: UIGestureRecognizerDelegate {
     func expandView() {
         
         UIView.animate(withDuration: 0.5, delay: 0.0, options: .curveEaseInOut, animations: {() -> Void in
-            pageWrapper.frame = pageWrapperFrame
-            videoWrapper.frame = videoWrapperFrame
-            videoWrapper.alpha = 1
-            videoView.frame = videoWrapperFrame
-            pageWrapper.alpha = 1.0
-            transparentBlackSheet.alpha = 1.0
-            borderView.alpha = 0.0
-            self.bodyView.frame = CGRect(x: 0, y: videoView.frame.size.height, width:     // keep stay on bottom of videoView
-                self.bodyView.frame.size.width, height: self.bodyView.frame.size.height)
-            borderView.frame = CGRect(x: videoView.frame.origin.y - 1, y: videoView.frame.origin.x - 1, width: videoView.frame.size.width + 1, height: videoView.frame.size.height + 1)
+            self.pageWrapper?.frame = self.pageWrapperFrame
+            self.videoWrapper?.frame = self.videoWrapperFrame
+            self.videoWrapper?.alpha = 1
+            self.videoView?.frame = self.videoWrapperFrame
+            self.pageWrapper?.alpha = 1.0
+            self.transparentBlackSheet?.alpha = 1.0
+            self.borderView?.alpha = 0.0
+            guard let videoViewFrame =  self.videoView?.frame else { return }
+            guard let bodyViewFrame =  self.bodyView?.frame else { return }
+
+            self.bodyView?.frame = CGRect(x: 0, y: videoViewFrame.size.height, width:     // keep stay on bottom of videoView
+                bodyViewFrame.size.width, height: bodyViewFrame.size.height)
+            self.borderView?.frame = CGRect(x: videoViewFrame.origin.y - 1, y: videoViewFrame.origin.x - 1, width: videoViewFrame.size.width + 1, height: videoViewFrame.size.height + 1)
 
             
         }, completion: {(_ finished: Bool) -> Void in
-            for recognizer: UIGestureRecognizer in videoWrapper.gestureRecognizers {
-                if (recognizer is UITapGestureRecognizer) {
-                    videoWrapper.removeGestureRecognizer(recognizer)
+            if let gRecognizers = self.videoWrapper?.gestureRecognizers {
+                for recognizer: UIGestureRecognizer in gRecognizers {
+                    if (recognizer is UITapGestureRecognizer) {
+                        self.videoWrapper?.removeGestureRecognizer(recognizer)
+                    }
                 }
             }
+            
             var expandedTap = UITapGestureRecognizer(target: self, action: #selector(self.onTapExpandedVideoView))
             expandedTap.numberOfTapsRequired = 1
             expandedTap.delegate = self
-            videoWrapper.addGestureRecognizer(expandedTap)
+            self.videoWrapper?.addGestureRecognizer(expandedTap)
             // player.controlStyle = MPMovieControlStyleDefault;
             // [self showVideoControl];
-            isExpandedMode = true
+            self.isExpandedMode = true
             //                         self.controllerView.hidden = FALSE;
-            didExpand()
+            self.didExpand()
         })
     }
     
@@ -685,58 +735,75 @@ extension DraggableFloatingViewController: UIGestureRecognizerDelegate {
     
         setFinalFrame()
         hideControllerView()
-        
+        guard let videoViewFrame =  videoView?.frame else { return }
+
         UIView.animate(withDuration: 0.5, delay: 0.0, options: .curveEaseInOut, animations: {() -> Void in
-            pageWrapper.frame = wFrame
-            videoWrapper.frame = vFrame
-            videoView.frame = CGRect(x: videoView.frame.origin.x, y: videoView.frame.origin.x, width: vFrame.size.width, height: vFrame.size.height)
-            pageWrapper.alpha = 0
-            transparentBlackSheet.alpha = 0.0
-            borderView.alpha = 1.0
-            borderView.frame = CGRect(x: videoView.frame.origin.y - 1, y: videoView.frame.origin.x - 1, width: videoView.frame.size.width + 1, height: videoView.frame.size.height + 1)
-            controllerView.frame = videoView.frame
-            
+            self.pageWrapper?.frame = self.wFrame
+            self.videoWrapper?.frame = self.vFrame
+            self.videoView?.frame = CGRect(x: videoViewFrame.origin.x, y: videoViewFrame.origin.x, width: self.vFrame.size.width, height: self.vFrame.size.height)
+            self.pageWrapper?.alpha = 0
+            self.transparentBlackSheet?.alpha = 0.0
+            self.borderView?.alpha = 1.0
+            self.borderView?.frame = CGRect(x: videoViewFrame.origin.y - 1, y: videoViewFrame.origin.x - 1, width: videoViewFrame.size.width + 1, height: videoViewFrame.size.height + 1)
+            if let videoUpdatedFrame = self.videoView?.frame {
+                self.controllerView?.frame = videoUpdatedFrame
+            }
         }, completion: {(_ finished: Bool) -> Void in
-            didMinimize()
+            self.didMinimize()
             //add tap gesture
-            tapRecognizer = nil
-            if tapRecognizer == nil {
-                for recognizer: UIGestureRecognizer in videoWrapper.gestureRecognizers {
-                    if (recognizer is UITapGestureRecognizer) {
-                        videoWrapper.removeGestureRecognizer(recognizer)
+            self.tapRecognizer = nil
+            if self.tapRecognizer == nil {
+                if let gRecognizers = self.videoWrapper?.gestureRecognizers {
+                    for recognizer: UIGestureRecognizer in gRecognizers {
+                        if (recognizer is UITapGestureRecognizer) {
+                            self.videoWrapper?.removeGestureRecognizer(recognizer)
+                        }
                     }
                 }
-                tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.expandViewOnTap))
-                tapRecognizer.numberOfTapsRequired = 1
-                tapRecognizer.delegate = self
-                videoWrapper.addGestureRecognizer(tapRecognizer)
+                
+                self.tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.expandView(onTap:)))
+                self.tapRecognizer?.numberOfTapsRequired = 1
+                self.tapRecognizer?.delegate = self
+                if let tapRecog = self.tapRecognizer {
+                    self.videoWrapper?.addGestureRecognizer(tapRecog)
+                }
             }
-            isExpandedMode = false
-            minimizedVideoFrame = videoWrapper.frame
-            if direction == UIPanGestureRecognizerDirectionDown {
+            self.isExpandedMode = false
+            if let videoWrapperFrame = self.videoWrapper?.frame {
+                self.minimizedVideoFrame = videoWrapperFrame
+            }
+            if self.direction == .UIPanGestureRecognizerDirectionDown {
                 //                             [parentView bringSubviewToFront:self.view];
-                bringToFront()
+                self.bringToFront()
             }
         })
-        
     }
 
+    func didMinimize () {
+        
+    }
+    
     
     func animateMiniView(toNormalPosition recognizer: UIPanGestureRecognizer, completion: @escaping () -> Void) {
         setFinalFrame()
+        guard let videoViewFrame =  videoView?.frame else { return }
 
         UIView.animate(withDuration: 0.25, delay: 0.0, options: .curveEaseInOut, animations: {() -> Void in
-            pageWrapper.frame = wFrame
-            videoWrapper.frame = vFrame
-            videoView.frame = CGRect(x: videoView.frame.origin.x, y: videoView.frame.origin.x, width: vFrame.size.width, height: vFrame.size.height)
-            pageWrapper.alpha = 0
-            videoWrapper.alpha = 1
-            borderView.alpha = 1
-            self.controllerView.frame = videoView.frame
-        }, completion: {(_ finished: Bool) -> Void in
-            if completion {
-                completion()
+            self.pageWrapper?.frame = self.wFrame
+            self.videoWrapper?.frame = self.vFrame
+            self.videoView?.frame = CGRect(x: videoViewFrame.origin.x, y: videoViewFrame.origin.x, width:self.vFrame.size.width, height: self.vFrame.size.height)
+            self.pageWrapper?.alpha = 0
+            self.videoWrapper?.alpha = 1
+            self.borderView?.alpha = 1
+            
+            if let vFrame = self.videoView?.frame {
+                self.controllerView?.frame = vFrame
             }
+        }, completion: {(_ finished: Bool) -> Void in
+//            if completion {
+//                completion()
+//            }
+            completion()
         })
         recognizer.setTranslation(CGPoint.zero, in: recognizer.view)
     }
@@ -745,40 +812,52 @@ extension DraggableFloatingViewController: UIGestureRecognizerDelegate {
         vFrame.origin.x = maxW + minimamVideoWidth
         wFrame.origin.x = maxW + minimamVideoWidth
         
+        guard let videoViewFrame =  videoView?.frame else { return }
+
         UIView.animate(withDuration: 0.1, delay: 0.0, options: .curveEaseInOut, animations: {() -> Void in
-            pageWrapper.frame = wFrame
-            videoWrapper.frame = vFrame
-            videoView.frame = CGRect(x: videoView.frame.origin.x, y: videoView.frame.origin.x, width: vFrame.size.width, height: vFrame.size.height)
-            pageWrapper.alpha = 0
-            videoWrapper.alpha = 0
-            borderView.alpha = 0
-            self.controllerView.frame = videoView.frame
-        }, completion: {(_ finished: Bool) -> Void in
-            if completion {
-                completion()
+            self.pageWrapper?.frame = self.wFrame
+            self.videoWrapper?.frame = self.vFrame
+            self.videoView?.frame = CGRect(x: videoViewFrame.origin.x, y: videoViewFrame.origin.x, width: self.vFrame.size.width, height: self.vFrame.size.height)
+            self.pageWrapper?.alpha = 0
+            self.videoWrapper?.alpha = 0
+            self.borderView?.alpha = 0
+            if let vFrame = self.videoView?.frame {
+                self.controllerView?.frame = vFrame
             }
+        }, completion: {(_ finished: Bool) -> Void in
+//            if completion {
+//                completion()
+//            }
+            completion()
             self.didDisappear()
         })
         recognizer.setTranslation(CGPoint.zero, in: recognizer.view)
     }
     
-    
+    func didDisappear () {
+        
+    }
     func fadeOutView(toLeft recognizer: UIPanGestureRecognizer, completion: @escaping () -> Void) {
         vFrame.origin.x = -maxW
         wFrame.origin.x = -maxW
         
+        guard let videoViewFrame =  videoView?.frame else { return }
+
         UIView.animate(withDuration: 0.1, delay: 0.0, options: .curveEaseInOut, animations: {() -> Void in
-            pageWrapper.frame = wFrame
-            videoWrapper.frame = vFrame
-            videoView.frame = CGRect(x: videoView.frame.origin.x, y: videoView.frame.origin.x, width: vFrame.size.width, height: vFrame.size.height)
-            pageWrapper.alpha = 0
-            videoWrapper.alpha = 0
-            borderView.alpha = 0
-            self.controllerView.frame = videoView.frame
-        }, completion: {(_ finished: Bool) -> Void in
-            if completion {
-                completion()
+            self.pageWrapper?.frame = self.wFrame
+            self.videoWrapper?.frame = self.vFrame
+            self.videoView?.frame = CGRect(x: videoViewFrame.origin.x, y: videoViewFrame.origin.x, width: self.vFrame.size.width, height: self.vFrame.size.height)
+            self.pageWrapper?.alpha = 0
+            self.videoWrapper?.alpha = 0
+            self.borderView?.alpha = 0
+            if let vFrame = self.videoView?.frame {
+                self.controllerView?.frame = vFrame
             }
+        }, completion: {(_ finished: Bool) -> Void in
+//            if completion {
+//                completion()
+//            }
+            completion()
             self.didDisappear()
         })
         
@@ -788,12 +867,16 @@ extension DraggableFloatingViewController: UIGestureRecognizerDelegate {
     
     
     func gestureRecognizerShould(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-        if gestureRecognizer.view?.frame.origin.y < 0 {
+        
+        guard let grecgViewFrame = gestureRecognizer.view?.frame  else { return false }
+        
+        if grecgViewFrame.origin.y < 0 {
             return false
         }
         else {
             return true
         }
+        
     }
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
