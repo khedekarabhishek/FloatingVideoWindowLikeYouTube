@@ -71,9 +71,24 @@ class DraggableFloatingViewController: UIViewController {
     let minimamVideoWidth: CGFloat = 140
     let flickVelocity: CGFloat = 1000
     
+    var isStatusBarHiddenByCustom:Bool = false {
+        didSet{
+            UIView.animate(withDuration: 0.5) { () -> Void in
+                self.setNeedsStatusBarAppearanceUpdate()
+            }
+        }
+    }
+    
+    var preferredStatusBarAnimation:UIStatusBarAnimation = .none {
+        didSet {
+            UIView.animate(withDuration: 0.5) { () -> Void in
+                self.setNeedsStatusBarAppearanceUpdate()
+            }
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
         self.bodyView = UIView();
         self.controllerView = UIView()
         self.messageView = UIView()
@@ -256,7 +271,7 @@ class DraggableFloatingViewController: UIViewController {
                 }
             }
             
-            var expandedTap = UITapGestureRecognizer(target: self, action: #selector(self.onTapExpandedVideoView))
+            let expandedTap = UITapGestureRecognizer(target: self, action: #selector(self.onTapExpandedVideoView))
             expandedTap.numberOfTapsRequired = 1
             expandedTap.delegate = self
             self.videoWrapper?.addGestureRecognizer(expandedTap)
@@ -264,13 +279,6 @@ class DraggableFloatingViewController: UIViewController {
             self.didExpand()
             self.didReAppear()
     })
-    }
-    
-    func didExpand() {
-    }
-    
-    func didReAppear() {
-        
     }
     
     func appearAnimation() {
@@ -350,12 +358,15 @@ class DraggableFloatingViewController: UIViewController {
     }
     
     func removeAllViews() {
-        UIApplication.shared.setStatusBarHidden(false, with: .slide)
+//        UIApplication.shared.setStatusBarHidden(false, with: .slide)
+        isStatusBarHiddenByCustom = false
+        preferredStatusBarAnimation = .slide
         videoWrapper?.removeFromSuperview()
         pageWrapper?.removeFromSuperview()
         transparentBlackSheet?.removeFromSuperview()
         view.removeFromSuperview()
     }
+    
     
     func showMessageView() {
         messageView?.isHidden = false
@@ -418,18 +429,38 @@ class DraggableFloatingViewController: UIViewController {
         expandView()
         showControllerAfterExpanded()
     }
+    
+    func didExpand() {
+    }
+    
+    func didReAppear() {
+        
+    }
+    
+    func didDisappear () {
+        
+    }
+    
+    func didFullExpandByGesture () {
+        
+    }
+    
+    func didMinimize () {
+        
+    }
+
 }
 
 extension DraggableFloatingViewController: UIGestureRecognizerDelegate {
     
     @objc func panAction(_ recognizer: UIPanGestureRecognizer) {
         
-        var touchPosInViewY: CGFloat = recognizer.location(in: view).y
+        let touchPosInViewY: CGFloat = recognizer.location(in: view).y
         
         if recognizer.state == .began {
             direction = .UIPanGestureRecognizerDirectionUndefined
             //storing direction
-            var velocity: CGPoint = recognizer.velocity(in: recognizer.view)
+            let velocity: CGPoint = recognizer.velocity(in: recognizer.view)
             detectPanDirection(velocity)
             isMinimizingByGesture = false
             //Snag the Y position of the touch when panning begins
@@ -459,7 +490,7 @@ extension DraggableFloatingViewController: UIGestureRecognizerDelegate {
             }
         } else if recognizer.state == .ended {
             
-            var velocity: CGPoint = recognizer.velocity(in: recognizer.view)
+            let velocity: CGPoint = recognizer.velocity(in: recognizer.view)
             guard let rView = recognizer.view else {
                 return
             }
@@ -556,7 +587,7 @@ extension DraggableFloatingViewController: UIGestureRecognizerDelegate {
     }
     
     func adjustView(onVerticalPan newOffsetY: inout CGFloat, recognizer: UIPanGestureRecognizer) {
-        var touchPosInViewY: CGFloat = recognizer.location(in: view).y
+        let touchPosInViewY: CGFloat = recognizer.location(in: view).y
         var progressRate: CGFloat = newOffsetY / finalViewOffsetY
         if progressRate >= 0.99 {
             progressRate = 1
@@ -577,7 +608,7 @@ extension DraggableFloatingViewController: UIGestureRecognizerDelegate {
             borderView?.frame = CGRect(x: videoFrame.origin.y - 1, y: videoFrame.origin.x - 1, width: videoFrame.size.width + 1, height: videoFrame.size.height + 1)
             controllerView?.frame = videoFrame
             
-            var percentage: CGFloat = touchPosInViewY / windowFrame.size.height
+            let percentage: CGFloat = touchPosInViewY / windowFrame.size.height
             transparentBlackSheet?.alpha = 1.0 - (percentage * 1.5)
             if let transparentBlackSheetAlpha = transparentBlackSheet?.alpha {
                 pageWrapper?.alpha = transparentBlackSheetAlpha
@@ -614,41 +645,37 @@ extension DraggableFloatingViewController: UIGestureRecognizerDelegate {
         recognizer.setTranslation(CGPoint.zero, in: recognizer.view)
     }
     
-    func didFullExpandByGesture () {
-        
-    }
-    
     func adjustView(onHorizontalPan recognizer: UIPanGestureRecognizer) {
         if let pageWrapperAlpha = pageWrapper?.alpha {
             if pageWrapperAlpha <= 0 {
-                var x: CGFloat = recognizer.location(in: view).x
+                let x: CGFloat = recognizer.location(in: view).x
 
                 if let recognizerView = recognizer.view {
                     if direction == .UIPanGestureRecognizerDirectionLeft {
                         //            NSLog(@"recognizer x=%f",recognizer.view.frame.origin.x);
-                        var velocity: CGPoint = recognizer.velocity(in: recognizer.view)
-                        var isVerticalGesture: Bool = fabs(velocity.y) > fabs(velocity.x)
-                        var translation: CGPoint = recognizer.translation(in: recognizer.view)
+                        let velocity: CGPoint = recognizer.velocity(in: recognizer.view)
+                        let isVerticalGesture: Bool = fabs(velocity.y) > fabs(velocity.x)
+                        let translation: CGPoint = recognizer.translation(in: recognizer.view)
                         recognizerView.center = CGPoint(x: recognizerView.center.x + translation.x, y: recognizerView.center.y)
                         if !isVerticalGesture {
-                            var percentage: CGFloat = (x / windowFrame.size.width)
+                            let percentage: CGFloat = (x / windowFrame.size.width)
                             recognizerView.alpha = percentage
                         }
                         recognizer.setTranslation(CGPoint.zero, in: recognizer.view)
                     }
                     else if direction == .UIPanGestureRecognizerDirectionRight {
                         //            NSLog(@"recognizer x=%f",recognizer.view.frame.origin.x);
-                        var velocity: CGPoint = recognizer.velocity(in: recognizer.view)
-                        var isVerticalGesture: Bool = fabs(velocity.y) > fabs(velocity.x)
-                        var translation: CGPoint = recognizer.translation(in: recognizer.view)
+                        let velocity: CGPoint = recognizer.velocity(in: recognizer.view)
+                        let isVerticalGesture: Bool = fabs(velocity.y) > fabs(velocity.x)
+                        let translation: CGPoint = recognizer.translation(in: recognizer.view)
                         recognizerView.center = CGPoint(x: recognizerView.center.x + translation.x, y: recognizerView.center.y)
                         if !isVerticalGesture {
                             if velocity.x > 0 {
-                                var percentage: CGFloat = (x / windowFrame.size.width)
+                                let percentage: CGFloat = (x / windowFrame.size.width)
                                 recognizerView.alpha = 1.0 - percentage
                             }
                             else {
-                                var percentage: CGFloat = (x / windowFrame.size.width)
+                                let percentage: CGFloat = (x / windowFrame.size.width)
                                 recognizerView.alpha = percentage
                             }
                         }
@@ -719,7 +746,7 @@ extension DraggableFloatingViewController: UIGestureRecognizerDelegate {
                 }
             }
             
-            var expandedTap = UITapGestureRecognizer(target: self, action: #selector(self.onTapExpandedVideoView))
+            let expandedTap = UITapGestureRecognizer(target: self, action: #selector(self.onTapExpandedVideoView))
             expandedTap.numberOfTapsRequired = 1
             expandedTap.delegate = self
             self.videoWrapper?.addGestureRecognizer(expandedTap)
@@ -779,11 +806,6 @@ extension DraggableFloatingViewController: UIGestureRecognizerDelegate {
         })
     }
 
-    func didMinimize () {
-        
-    }
-    
-    
     func animateMiniView(toNormalPosition recognizer: UIPanGestureRecognizer, completion: @escaping () -> Void) {
         setFinalFrame()
         guard let videoViewFrame =  videoView?.frame else { return }
@@ -834,9 +856,6 @@ extension DraggableFloatingViewController: UIGestureRecognizerDelegate {
         recognizer.setTranslation(CGPoint.zero, in: recognizer.view)
     }
     
-    func didDisappear () {
-        
-    }
     func fadeOutView(toLeft recognizer: UIPanGestureRecognizer, completion: @escaping () -> Void) {
         vFrame.origin.x = -maxW
         wFrame.origin.x = -maxW
@@ -866,7 +885,7 @@ extension DraggableFloatingViewController: UIGestureRecognizerDelegate {
     
     
     
-    func gestureRecognizerShould(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+    private func gestureRecognizerShould(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         
         guard let grecgViewFrame = gestureRecognizer.view?.frame  else { return false }
         
@@ -883,10 +902,12 @@ extension DraggableFloatingViewController: UIGestureRecognizerDelegate {
         return true
     }
 
-    
+    override var preferredStatusBarUpdateAnimation: UIStatusBarAnimation{
+        return preferredStatusBarAnimation
+    }
     
    override var prefersStatusBarHidden: Bool {
-        return true
+        return isStatusBarHiddenByCustom
     }
     
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
@@ -899,20 +920,6 @@ extension DraggableFloatingViewController: UIGestureRecognizerDelegate {
     
     
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

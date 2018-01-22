@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		AD006F18200DFDCE005EA821 /* DraggableFloatingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD006F17200DFDCE005EA821 /* DraggableFloatingViewController.swift */; };
+		E1599F3020148CE500F95AE4 /* VideoDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1599F2F20148CE500F95AE4 /* VideoDetailViewController.swift */; };
+		E1599F322014926700F95AE4 /* test.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = E1599F312014925F00F95AE4 /* test.mp4 */; };
+		E1599F34201493BB00F95AE4 /* FirstViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1599F33201493BB00F95AE4 /* FirstViewController.swift */; };
 		E18C9D7620052E8700FE35AF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18C9D7520052E8700FE35AF /* AppDelegate.swift */; };
 		E18C9D7820052E8700FE35AF /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18C9D7720052E8700FE35AF /* ViewController.swift */; };
 		E18C9D7B20052E8700FE35AF /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E18C9D7920052E8700FE35AF /* Main.storyboard */; };
@@ -36,6 +39,9 @@
 
 /* Begin PBXFileReference section */
 		AD006F17200DFDCE005EA821 /* DraggableFloatingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DraggableFloatingViewController.swift; sourceTree = "<group>"; };
+		E1599F2F20148CE500F95AE4 /* VideoDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoDetailViewController.swift; sourceTree = "<group>"; };
+		E1599F312014925F00F95AE4 /* test.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = test.mp4; sourceTree = "<group>"; };
+		E1599F33201493BB00F95AE4 /* FirstViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstViewController.swift; sourceTree = "<group>"; };
 		E18C9D7220052E8700FE35AF /* FloatingVideoWindowLikeYouTube.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FloatingVideoWindowLikeYouTube.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E18C9D7520052E8700FE35AF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E18C9D7720052E8700FE35AF /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -102,10 +108,13 @@
 				E18C9D7520052E8700FE35AF /* AppDelegate.swift */,
 				E18C9D7720052E8700FE35AF /* ViewController.swift */,
 				AD006F17200DFDCE005EA821 /* DraggableFloatingViewController.swift */,
+				E1599F2F20148CE500F95AE4 /* VideoDetailViewController.swift */,
+				E1599F33201493BB00F95AE4 /* FirstViewController.swift */,
 				E18C9D7920052E8700FE35AF /* Main.storyboard */,
 				E18C9D7C20052E8700FE35AF /* Assets.xcassets */,
 				E18C9D7E20052E8700FE35AF /* LaunchScreen.storyboard */,
 				E18C9D8120052E8700FE35AF /* Info.plist */,
+				E1599F312014925F00F95AE4 /* test.mp4 */,
 			);
 			path = FloatingVideoWindowLikeYouTube;
 			sourceTree = "<group>";
@@ -238,6 +247,7 @@
 				E18C9D8020052E8700FE35AF /* LaunchScreen.storyboard in Resources */,
 				E18C9D7D20052E8700FE35AF /* Assets.xcassets in Resources */,
 				E18C9D7B20052E8700FE35AF /* Main.storyboard in Resources */,
+				E1599F322014926700F95AE4 /* test.mp4 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -262,9 +272,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E1599F34201493BB00F95AE4 /* FirstViewController.swift in Sources */,
 				E18C9D7820052E8700FE35AF /* ViewController.swift in Sources */,
 				E18C9D7620052E8700FE35AF /* AppDelegate.swift in Sources */,
 				AD006F18200DFDCE005EA821 /* DraggableFloatingViewController.swift in Sources */,
+				E1599F3020148CE500F95AE4 /* VideoDetailViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
